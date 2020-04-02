@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:socialmedia/pages/profile.dart';
 import 'package:socialmedia/pages/timeline.dart';
+import 'package:socialmedia/pages/activity_feed.dart';
+import 'package:socialmedia/pages/upload.dart';
+import 'package:socialmedia/pages/search.dart';
+import 'package:socialmedia/pages/create_account.dart';
 
 final GoogleSignIn googleSignIn= GoogleSignIn();
-
+final usersRef=Firestore.instance.collection('users');
+final DateTime timestamp=DateTime.now();
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -25,7 +31,7 @@ class _HomeState extends State<Home> {
    //   initialPage: 2
     );
     super.initState();
-    googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account){
+    googleSignIn.onCurrentUserChanged.listen((account){
       handleSignIn(account);
     },onError: (err){
       print('Error Signing in: $err');
@@ -40,8 +46,10 @@ class _HomeState extends State<Home> {
       print('Error Signing in: $err');
     });
   }
+
   handleSignIn(GoogleSignInAccount account){
     if(account !=null){
+      createUserInFirestore();
       print('User Signed In: $account');
       setState(() {
         isAuth=true;
@@ -51,6 +59,34 @@ class _HomeState extends State<Home> {
       setState(() {
         isAuth=false;
       });
+    }
+  }
+
+  createUserInFirestore()async {
+    //1)check if user exist in users collection in database 
+    //(according to their ID)
+    final GoogleSignInAccount user=googleSignIn.currentUser;
+    final DocumentSnapshot doc = await usersRef.document(user.id).get();
+    
+    if(!doc.exists){
+    //2)if the user doesnt exist, then we want to take them to
+    //create account page
+      final username=await Navigator.push(context,MaterialPageRoute(builder: (context)=>
+      CreateAccount()));
+    
+    //3) get username from create account , use it to make new 
+    //user document in user collection 
+    usersRef.document(user.id).setData(
+     {
+       "id":user.id,
+       "username": username,
+       "photoUrl": user.photoUrl,
+       "email": user.email,
+       "displayName": user.displayName,
+       "bio":"",
+       "timestamp": timestamp
+     } 
+    );
     }
   }
 
@@ -79,10 +115,14 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: PageView(
         children: <Widget>[
-          TimeLine(),
-         // ActivityFeed(),
-          //Upload(),
-          //Search(),
+         // TimeLine(),
+         RaisedButton(
+           child: Text("Logout"),
+           onPressed: logout,
+         ),
+          ActivityFeed(),
+          Upload(),
+          Search(),
           Profile(),
         ],
         controller: pageController,

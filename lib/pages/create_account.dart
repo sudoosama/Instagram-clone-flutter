@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:socialmedia/widgets/header.dart';
 
@@ -7,18 +9,29 @@ class CreateAccount extends StatefulWidget {
 }
 
 class _CreateAccountState extends State<CreateAccount> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey=GlobalKey<FormState>();
   String username;
 
   submit(){
-    _formKey.currentState.save();
-    Navigator.pop(context,username);
-  }
+    final form=_formKey.currentState;
+    if(form.validate()){
+      form.save();
+      //_formKey.currentState.save();
+      SnackBar snackBar=SnackBar(content: Text("Welcome $username!"));
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+      Timer(Duration(seconds: 2),(){
+        Navigator.pop(context,username);
+
+      });
+    }
+    }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header(titleText: "Set up your Profile"),
+      key: _scaffoldKey,
+      appBar: header(titleText: "Set up your Profile",removeBackButton: true),
       body: ListView(children: <Widget>[
         Container(
           child: Column(
@@ -33,7 +46,19 @@ class _CreateAccountState extends State<CreateAccount> {
               child: Container(
                 child: Form(
                   key: _formKey,
+                  autovalidate: true,
                   child: TextFormField(
+                    validator: (val){
+                      if(val.trim().length<3||val.isEmpty) {
+                        return 'Username too short';
+                      }
+                      else if(val.trim().length>12){
+                        return "Username too long";
+                      }
+                      else{
+                        return null;
+                      }
+                    },
                   onSaved: (val)=>username=val,
                    decoration: InputDecoration(
                      border: OutlineInputBorder(),
@@ -46,15 +71,17 @@ class _CreateAccountState extends State<CreateAccount> {
               GestureDetector(
                 onTap: submit,
                 child: Container(
+                  height: 50.0,
+                  width: 350.0,
                   decoration: BoxDecoration(
                     color: Colors.blue,
                     borderRadius: BorderRadius.circular(7.0) 
                   ),
-                  child: Text("Submit",style: TextStyle(
+                  child: Center(child: Text("Submit",style: TextStyle(
                     color: Colors.white,
                     fontSize: 15.0,
                     fontWeight: FontWeight.bold
-                ,  ),),
+                ,  ),),),
                 )),
               
             ],

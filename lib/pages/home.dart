@@ -8,10 +8,13 @@ import 'package:socialmedia/pages/timeline.dart';
 import 'package:socialmedia/pages/activity_feed.dart';
 import 'package:socialmedia/pages/upload.dart';
 import 'package:socialmedia/pages/search.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:socialmedia/pages/create_account.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
+final StorageReference storageRef = FirebaseStorage.instance.ref();
 final usersRef = Firestore.instance.collection('users');
+final postsRef = Firestore.instance.collection('posts');
 final DateTime timestamp = DateTime.now();
 User currentUser;
 

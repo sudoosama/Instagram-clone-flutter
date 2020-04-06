@@ -273,8 +273,8 @@ class _UploadState extends State<Upload> {
     {placemark.administrativeArea} ${placemark.postalCode}, $
     {placemark.country}';
     print(completeAddress);
-    String formattedAddress="${placemark.locality},$"
-    "{placemark.country}";
+    String formattedAddress='${placemark.locality},$
+    {placemark.country}';
     locationController.text =formattedAddress;
   }
 

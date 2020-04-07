@@ -1,15 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:socialmedia/model/user.dart';
-import 'package:socialmedia/pages/profile.dart';
-import 'package:socialmedia/pages/timeline.dart';
-import 'package:socialmedia/pages/activity_feed.dart';
-import 'package:socialmedia/pages/upload.dart';
-import 'package:socialmedia/pages/search.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:socialmedia/pages/activity_feed.dart';
 import 'package:socialmedia/pages/create_account.dart';
+import 'package:socialmedia/pages/profile.dart';
+import 'package:socialmedia/pages/search.dart';
+import 'package:socialmedia/pages/timeline.dart';
+import 'package:socialmedia/pages/upload.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
 final StorageReference storageRef = FirebaseStorage.instance.ref();
@@ -32,28 +31,23 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     pageController = PageController();
-    //   pageController=PageController(
-    //  //   initialPage: 2
-    //   );
+    // Detects when user signed in
     googleSignIn.onCurrentUserChanged.listen((account) {
       handleSignIn(account);
     }, onError: (err) {
-      print('Error Signing in: $err');
+      print('Error signing in: $err');
     });
-    //Navigator.pushReplacementNamed(context, '/home');  // This is the culprit
-
-    //Reauthenticate when user is sign in
+    // Reauthenticate user when app is opened
     googleSignIn.signInSilently(suppressErrors: false).then((account) {
       handleSignIn(account);
     }).catchError((err) {
-      print('Error Signing in: $err');
+      print('Error signing in: $err');
     });
   }
 
   handleSignIn(GoogleSignInAccount account) {
     if (account != null) {
       createUserInFirestore();
-      //print('User Signed In: $account');
       setState(() {
         isAuth = true;
       });
@@ -65,17 +59,16 @@ class _HomeState extends State<Home> {
   }
 
   createUserInFirestore() async {
-    //1)check if user exist in users collection in database
-    //(according to their ID)
+    // 1) check if user exists in users collection in database (according to their id)
     final GoogleSignInAccount user = googleSignIn.currentUser;
-    final DocumentSnapshot doc = await usersRef.document(user.id).get();
+    DocumentSnapshot doc = await usersRef.document(user.id).get();
+
     if (!doc.exists) {
-      //2)if the user doesnt exist, then we want to take them to
-      //create account page
+      // 2) if the user doesn't exist, then we want to take them to the create account page
       final username = await Navigator.push(
           context, MaterialPageRoute(builder: (context) => CreateAccount()));
-      //3) get username from create account , use it to make new
-      //user document in user collection
+
+      // 3) get username from create account, use it to make new user document in users collection
       usersRef.document(user.id).setData({
         "id": user.id,
         "username": username,
@@ -85,12 +78,11 @@ class _HomeState extends State<Home> {
         "bio": "",
         "timestamp": timestamp
       });
-    //  doc=await usersRef.document(user.id).get();
-      final DocumentSnapshot doc = await usersRef.document(user.id).get();
+
+      doc = await usersRef.document(user.id).get();
     }
+
     currentUser = User.fromDocument(doc);
-    print(currentUser);
-    print(currentUser.username);
   }
 
   @override
@@ -114,22 +106,24 @@ class _HomeState extends State<Home> {
   }
 
   onTap(int pageIndex) {
-    pageController.animateToPage(pageIndex,
-        duration: Duration(milliseconds: 300), curve: Curves.easeIn);
+    pageController.animateToPage(
+      pageIndex,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   Scaffold buildAuthScreen() {
     return Scaffold(
       body: PageView(
         children: <Widget>[
-          // TimeLine(),
+          // Timeline(),
           RaisedButton(
-            child: Text("Logout"),
+            child: Text('Logout'),
             onPressed: logout,
           ),
           ActivityFeed(),
           Upload(currentUser: currentUser),
-          TimeLine(),
           Search(),
           Profile(profileId: currentUser?.id),
         ],
@@ -138,69 +132,69 @@ class _HomeState extends State<Home> {
         physics: NeverScrollableScrollPhysics(),
       ),
       bottomNavigationBar: CupertinoTabBar(
-        currentIndex: pageIndex,
-        onTap: onTap,
-        activeColor: Theme.of(context).primaryColor,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.whatshot),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_active),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.photo_camera,
-              size: 35.0,
+          currentIndex: pageIndex,
+          onTap: onTap,
+          activeColor: Theme.of(context).primaryColor,
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.whatshot)),
+            BottomNavigationBarItem(icon: Icon(Icons.notifications_active)),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.photo_camera,
+                size: 35.0,
+              ),
             ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-          ),
-        ],
-      ),
+            BottomNavigationBarItem(icon: Icon(Icons.search)),
+            BottomNavigationBarItem(icon: Icon(Icons.account_circle)),
+          ]),
     );
-    //return RaisedButton(
+    // return RaisedButton(
     //   child: Text('Logout'),
-    //  onPressed: logout,
-    //  );
+    //   onPressed: logout,
+    // );
   }
 
-  buildUnAuthScreen() {
+  Scaffold buildUnAuthScreen() {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [Colors.teal, Colors.purple])),
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [
+              Theme.of(context).accentColor,
+              Theme.of(context).primaryColor,
+            ],
+          ),
+        ),
         alignment: Alignment.center,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              "FlutterShare",
+              'FlutterShare',
               style: TextStyle(
-                  // fontFamily: "Signatra",
-                  fontSize: 60.0,
-                  color: Colors.black),
+                fontFamily: "Signatra",
+                fontSize: 90.0,
+                color: Colors.white,
+              ),
             ),
             GestureDetector(
-                onTap: login,
-                child: Container(
-                  margin: EdgeInsets.only(left: 60.0, right: 60.0),
-                  width: MediaQuery.of(context).size.width,
-                  height: 50.0,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                              'assets/images/google_signin_button.png'),
-                          fit: BoxFit.cover)),
-                ))
+              onTap: login,
+              child: Container(
+                width: 260.0,
+                height: 60.0,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                      'assets/images/google_signin_button.png',
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),
@@ -212,3 +206,35 @@ class _HomeState extends State<Home> {
     return isAuth ? buildAuthScreen() : buildUnAuthScreen();
   }
 }
+
+//import 'package:cloud_firestore/cloud_firestore.dart';
+
+class User{
+  final String id;
+  final String username;
+  final String email;
+  final String photoUrl;
+  final String displayName;
+  final String bio;
+
+  User({
+    this.id,
+    this.username,
+    this.email,
+    this.photoUrl,
+    this.displayName,
+    this.bio,
+  });
+  factory User.fromDocument(DocumentSnapshot doc){
+    return User(
+      id: doc['id'],
+      email: doc['email'],
+      username: doc['username'],
+      photoUrl: doc['photoUrl'],
+      displayName: doc['displayName'],
+      bio: doc['bio'],
+    );
+  }
+}
+
+

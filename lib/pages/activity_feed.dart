@@ -13,3 +13,10 @@ class _ActivityFeedState extends State<ActivityFeed> {
     );
   }
 }
+
+class ActivityFeedItem extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}

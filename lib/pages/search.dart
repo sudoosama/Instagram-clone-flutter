@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:socialmedia/model/user.dart';
 import 'package:socialmedia/pages/home.dart';
 import 'package:socialmedia/widgets/progress.dart';
 
@@ -24,7 +23,7 @@ class _SearchState extends State<Search> {
     });
   }
 
-  clearSearch(){
+  clearSearch() {
     searchController.clear();
   }
 
@@ -34,16 +33,17 @@ class _SearchState extends State<Search> {
       title: TextFormField(
         controller: searchController,
         decoration: InputDecoration(
-            hintText: "Search for a user...",
-            filled: true,
-            prefixIcon: Icon(
-              Icons.account_box,
-              size: 28.0,
-            ),
-            suffixIcon: IconButton(
-                icon: Icon(Icons.clear),
-                onPressed: clearSearch,
-            )),
+          hintText: "Search for a user...",
+          filled: true,
+          prefixIcon: Icon(
+            Icons.account_box,
+            size: 28.0,
+          ),
+          suffixIcon: IconButton(
+            icon: Icon(Icons.clear),
+            onPressed: clearSearch,
+          ),
+        ),
         onFieldSubmitted: handleSearch,
       ),
     );
@@ -56,17 +56,20 @@ class _SearchState extends State<Search> {
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
-            SvgPicture.asset('assets/image/search.svg',
-                height: orientation == Orientation.portrait ? 300.0 : 200.0),
+            SvgPicture.asset(
+              'assets/images/search.svg',
+              height: orientation == Orientation.portrait ? 300.0 : 200.0,
+            ),
             Text(
               "Find Users",
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: Colors.white,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 60.0),
-            )
+                color: Colors.white,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w600,
+                fontSize: 60.0,
+              ),
+            ),
           ],
         ),
       ),
@@ -83,7 +86,7 @@ class _SearchState extends State<Search> {
         List<UserResult> searchResults = [];
         snapshot.data.documents.forEach((doc) {
           User user = User.fromDocument(doc);
-          UserResult searchResult= UserResult(user);
+          UserResult searchResult = UserResult(user);
           searchResults.add(searchResult);
         });
         return ListView(
@@ -96,45 +99,47 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: Theme.of(context).primaryColor.withOpacity(0.8),
-      backgroundColor: Colors.purple.withOpacity(0.8),
+      backgroundColor: Theme.of(context).primaryColor.withOpacity(0.8),
       appBar: buildSearchField(),
-      //body: buildNoContent(),
       body:
-          searchResultsFuture == null ? buildNoContent() : buildSearchResults(),
+      searchResultsFuture == null ? buildNoContent() : buildSearchResults(),
     );
   }
 }
 
 class UserResult extends StatelessWidget {
   final User user;
+
   UserResult(this.user);
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.purple.withOpacity(0.7),
+      color: Theme.of(context).primaryColor.withOpacity(0.7),
       child: Column(
         children: <Widget>[
           GestureDetector(
-            onTap: ()=> print('Tapped'),
+            onTap: () => print('tapped'),
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: Colors.grey,
                 backgroundImage: CachedNetworkImageProvider(user.photoUrl),
               ),
-              title: Text(user.displayName,style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),),
-              subtitle: Text(user.username,style: TextStyle(
-                color: Colors.white
-              ),),
+              title: Text(
+                user.displayName,
+                style:
+                TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                user.username,
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
           Divider(
             height: 2.0,
             color: Colors.white54,
-          )
+          ),
         ],
       ),
     );

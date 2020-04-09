@@ -1,3 +1,4 @@
+import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -174,9 +175,9 @@ class _HomeState extends State<Home> {
           children: <Widget>[
             Text(
               'FlutterShare',
-              style: TextStyle(
-                fontFamily: "Signatra",
-                fontSize: 90.0,
+              style: GoogleFonts.pacifico(
+ //               fontFamily: "Signatra",
+                fontSize: 60.0,
                 color: Colors.white,
               ),
             ),

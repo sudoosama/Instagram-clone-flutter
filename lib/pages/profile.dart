@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:socialmedia/pages/edit_profile.dart';
 import 'package:socialmedia/pages/home.dart';
 import 'package:socialmedia/widgets/header.dart';
 import 'package:socialmedia/widgets/progress.dart';
@@ -53,7 +54,7 @@ class _ProfileState extends State<Profile> {
       child: FlatButton(
         onPressed: function,
         child: Container(
-          width: 250.0,
+          width: 240.0,
           height: 27.0,
           child: Text(
             text,

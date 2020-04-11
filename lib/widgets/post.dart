@@ -287,5 +287,5 @@ showComments(BuildContext context,{String postId,String ownerId,String mediaUrl}
       postOwnerId: ownerId,
       postMediaUrl: mediaUrl,
     );
-  }))
+  }));
 }

@@ -9,7 +9,8 @@ AppBar header({bool isAppTitle=false, String titleText,removeBackButton=false}){
       color: Colors.white,
       fontSize:
       isAppTitle?50.0:22.0
-    ),),
+    ),
+    overflow: TextOverflow.ellipsis,),
     centerTitle: true,
     backgroundColor: Colors.teal,
   );

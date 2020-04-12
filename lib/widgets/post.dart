@@ -1,6 +1,7 @@
 import 'package:animator/animator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:socialmedia/pages/activity_feed.dart';
 import 'package:socialmedia/pages/comment.dart';
 import 'package:socialmedia/pages/home.dart';
 import 'package:socialmedia/widgets/custome_image.dart';
@@ -117,7 +118,7 @@ class _PostState extends State<Post> {
             backgroundColor: Colors.grey,
           ),
           title: GestureDetector(
-            onTap: () => print("showing profile"),
+            onTap: () => showProfile(context,profileId: user.id),
             child: Text(
               user.username,
               style: TextStyle(
@@ -144,6 +145,7 @@ class _PostState extends State<Post> {
           .collection('userPosts')
           .document(postId)
           .updateData({'likes.$currentUserId': false});
+      removeLikeFromActivityFeed();
       setState(() {
         likeCount -= 1;
         isLiked = false;
@@ -155,6 +157,7 @@ class _PostState extends State<Post> {
           .collection('userPosts')
           .document(postId)
           .updateData({'likes.$currentUserId': true});
+      addLikeToActivityFeed();
       setState(() {
         likeCount += 1;
         isLiked = true;
@@ -167,6 +170,44 @@ class _PostState extends State<Post> {
         });
       });
     }
+  }
+
+  addLikeToActivityFeed() {
+    bool isNotPostOwner=currentUserId!=ownerId;
+    if(isNotPostOwner){
+
+      activityFeedRef
+          .document(ownerId)
+          .collection("feeditems")
+          .document(postId)
+          .setData({
+        "type": "like",
+        "username": currentUser.username,
+        "userId": currentUser.id,
+        "userProfileImg": currentUser.photoUrl,
+        "postId": postId,
+        "mediaUrl": mediaUrl,
+        "timestamp": timestamp,
+      });
+    }
+
+  }
+
+  removeLikeFromActivityFeed() {
+    bool isNotPostOwner=currentUserId!=ownerId;
+    if(isNotPostOwner){
+      activityFeedRef
+          .document(ownerId)
+          .collection("feedItems")
+          .document(postId)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
+          doc.reference.delete();
+        }
+      });
+    }
+
   }
 
   buildPostImage() {
@@ -185,7 +226,7 @@ class _PostState extends State<Post> {
                   builder: (anim) => Transform.scale(
                     scale: anim.value,
                     child: Icon(
-                       Icons.favorite,
+                      Icons.favorite,
                       size: 80.0,
                       color: Colors.white,
                     ),
@@ -280,8 +321,9 @@ class _PostState extends State<Post> {
   }
 }
 
-showComments(BuildContext context,{String postId,String ownerId,String mediaUrl}){
-  Navigator.push(context,MaterialPageRoute(builder: (context){
+showComments(BuildContext context,
+    {String postId, String ownerId, String mediaUrl}) {
+  Navigator.push(context, MaterialPageRoute(builder: (context) {
     return Comments(
       postId: postId,
       postOwnerId: ownerId,

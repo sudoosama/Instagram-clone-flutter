@@ -1,13 +1,15 @@
+import 'dart:async';
+
 import 'package:animator/animator.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:socialmedia/model/user.dart';
 import 'package:socialmedia/pages/activity_feed.dart';
 import 'package:socialmedia/pages/comment.dart';
 import 'package:socialmedia/pages/home.dart';
 import 'package:socialmedia/widgets/custome_image.dart';
 import 'package:socialmedia/widgets/progress.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'dart:async';
 
 class Post extends StatefulWidget {
   final String postId;
@@ -41,12 +43,12 @@ class Post extends StatefulWidget {
   }
 
   int getLikeCount(likes) {
-    //if no likes, return 0
+    // if no likes, return 0
     if (likes == null) {
       return 0;
     }
     int count = 0;
-    //if the key is explicitly set true, add a like
+    // if the key is explicitly set to true, add a like
     likes.values.forEach((val) {
       if (val == true) {
         count += 1;
@@ -57,15 +59,15 @@ class Post extends StatefulWidget {
 
   @override
   _PostState createState() => _PostState(
-        postId: this.postId,
-        ownerId: this.ownerId,
-        username: this.username,
-        location: this.location,
-        description: this.description,
-        mediaUrl: this.mediaUrl,
-        likes: this.likes,
-        likeCount: this.getLikeCount(this.likes),
-      );
+    postId: this.postId,
+    ownerId: this.ownerId,
+    username: this.username,
+    location: this.location,
+    description: this.description,
+    mediaUrl: this.mediaUrl,
+    likes: this.likes,
+    likeCount: getLikeCount(this.likes),
+  );
 }
 
 class _PostState extends State<Post> {
@@ -77,9 +79,9 @@ class _PostState extends State<Post> {
   final String description;
   final String mediaUrl;
   bool showHeart = false;
+  bool isLiked;
   int likeCount;
   Map likes;
-  bool isLiked;
 
   _PostState({
     this.postId,
@@ -91,18 +93,6 @@ class _PostState extends State<Post> {
     this.likes,
     this.likeCount,
   });
-
-//  factory Post.fromDocument(DocumentSnapshot doc) {
-//    return Post(
-//      postId: doc['postId'],
-//      ownerId: doc['ownerId'],
-//      username: doc['username'],
-//      location: doc['location'],
-//      description: doc['description'],
-//      mediaUrl: doc['mediaUrl'],
-//      likes: doc['likes'],
-//    );
-//  }
 
   buildPostHeader() {
     return FutureBuilder(
@@ -118,7 +108,7 @@ class _PostState extends State<Post> {
             backgroundColor: Colors.grey,
           ),
           title: GestureDetector(
-            onTap: () => showProfile(context,profileId: user.id),
+            onTap: () => showProfile(context, profileId: user.id),
             child: Text(
               user.username,
               style: TextStyle(
@@ -139,6 +129,7 @@ class _PostState extends State<Post> {
 
   handleLikePost() {
     bool _isLiked = likes[currentUserId] == true;
+
     if (_isLiked) {
       postsRef
           .document(ownerId)
@@ -173,12 +164,12 @@ class _PostState extends State<Post> {
   }
 
   addLikeToActivityFeed() {
-    bool isNotPostOwner=currentUserId!=ownerId;
-    if(isNotPostOwner){
-
+    // add a notification to the postOwner's activity feed only if comment made by OTHER user (to avoid getting notification for our own like)
+    bool isNotPostOwner = currentUserId != ownerId;
+    if (isNotPostOwner) {
       activityFeedRef
           .document(ownerId)
-          .collection("feeditems")
+          .collection("feedItems")
           .document(postId)
           .setData({
         "type": "like",
@@ -190,12 +181,11 @@ class _PostState extends State<Post> {
         "timestamp": timestamp,
       });
     }
-
   }
 
   removeLikeFromActivityFeed() {
-    bool isNotPostOwner=currentUserId!=ownerId;
-    if(isNotPostOwner){
+    bool isNotPostOwner = currentUserId != ownerId;
+    if (isNotPostOwner) {
       activityFeedRef
           .document(ownerId)
           .collection("feedItems")
@@ -207,7 +197,6 @@ class _PostState extends State<Post> {
         }
       });
     }
-
   }
 
   buildPostImage() {
@@ -219,22 +208,20 @@ class _PostState extends State<Post> {
           cachedNetworkImage(mediaUrl),
           showHeart
               ? Animator(
-                  duration: Duration(milliseconds: 300),
-                  tween: Tween(begin: 0.8, end: 1.4),
-                  curve: Curves.elasticOut,
-                  cycles: 0,
-                  builder: (anim) => Transform.scale(
-                    scale: anim.value,
-                    child: Icon(
-                      Icons.favorite,
-                      size: 80.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                )
+            duration: Duration(milliseconds: 300),
+            tween: Tween(begin: 0.8, end: 1.4),
+            curve: Curves.elasticOut,
+            cycles: 0,
+            builder: (anim) => Transform.scale(
+              scale: anim.value,
+              child: Icon(
+                Icons.favorite,
+                size: 80.0,
+                color: Colors.red,
+              ),
+            ),
+          )
               : Text(""),
-          //without animation
-          // showHeart?Icon(Icons.favorite,size: 80.0,color: Colors.white,):Text(""),
         ],
       ),
     );
@@ -268,7 +255,7 @@ class _PostState extends State<Post> {
                 size: 28.0,
                 color: Colors.blue[900],
               ),
-            )
+            ),
           ],
         ),
         Row(
@@ -282,7 +269,7 @@ class _PostState extends State<Post> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            )
+            ),
           ],
         ),
         Row(
@@ -291,16 +278,14 @@ class _PostState extends State<Post> {
             Container(
               margin: EdgeInsets.only(left: 20.0),
               child: Text(
-                "$username",
+                "$username ",
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            Expanded(
-              child: Text(description),
-            )
+            Expanded(child: Text(description))
           ],
         ),
       ],
@@ -310,12 +295,13 @@ class _PostState extends State<Post> {
   @override
   Widget build(BuildContext context) {
     isLiked = (likes[currentUserId] == true);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         buildPostHeader(),
         buildPostImage(),
-        buildPostFooter(),
+        buildPostFooter()
       ],
     );
   }
@@ -331,3 +317,34 @@ showComments(BuildContext context,
     );
   }));
 }
+
+
+class User{
+  final String id;
+  final String username;
+  final String email;
+  final String photoUrl;
+  final String displayName;
+  final String bio;
+
+  User({
+    this.id,
+    this.username,
+    this.email,
+    this.photoUrl,
+    this.displayName,
+    this.bio,
+  });
+  factory User.fromDocument(DocumentSnapshot doc){
+    return User(
+      id: doc['id'],
+      email: doc['email'],
+      username: doc['username'],
+      photoUrl: doc['photoUrl'],
+      displayName: doc['displayName'],
+      bio: doc['bio'],
+    );
+  }
+}
+
+

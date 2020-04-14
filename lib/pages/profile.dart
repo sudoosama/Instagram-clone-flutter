@@ -1,7 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
+//import 'package:socialmedia/models/user.dart';
 import 'package:socialmedia/pages/edit_profile.dart';
 import 'package:socialmedia/pages/home.dart';
 import 'package:socialmedia/widgets/header.dart';
@@ -20,7 +21,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   final String currentUserId = currentUser?.id;
-  String postOrientation="grid";
+  String postOrientation = "grid";
   bool isLoading = false;
   int postCount = 0;
   List<Post> posts = [];
@@ -28,14 +29,13 @@ class _ProfileState extends State<Profile> {
   @override
   void initState() {
     super.initState();
-    getProfilePost();
+    getProfilePosts();
   }
 
-  getProfilePost() async {
+  getProfilePosts() async {
     setState(() {
       isLoading = true;
     });
-
     QuerySnapshot snapshot = await postsRef
         .document(widget.profileId)
         .collection('userPosts')
@@ -85,7 +85,7 @@ class _ProfileState extends State<Profile> {
       child: FlatButton(
         onPressed: function,
         child: Container(
-          width: 240.0,
+          width: 230.0,
           height: 27.0,
           child: Text(
             text,
@@ -107,11 +107,98 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  buildProfilePost() {
+  buildProfileButton() {
+    // viewing your own profile - should show edit profile button
+    bool isProfileOwner = currentUserId == widget.profileId;
+    if (isProfileOwner) {
+      return buildButton(text: "Edit Profile", function: editProfile);
+    } else {
+      return Text('button');
+    }
+  }
+
+  buildProfileHeader() {
+    return FutureBuilder(
+        future: usersRef.document(widget.profileId).get(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return circularProgress();
+          }
+          User user = User.fromDocument(snapshot.data);
+          return Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    CircleAvatar(
+                      radius: 40.0,
+                      backgroundColor: Colors.grey,
+                      backgroundImage:
+                      CachedNetworkImageProvider(user.photoUrl),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              buildCountColumn("posts", postCount),
+                              buildCountColumn("followers", 0),
+                              buildCountColumn("following", 0),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              buildProfileButton(),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 12.0),
+                  child: Text(
+                    user.username,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 4.0),
+                  child: Text(
+                    user.displayName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.only(top: 2.0),
+                  child: Text(
+                    user.bio,
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  buildProfilePosts() {
     if (isLoading) {
       return circularProgress();
-    }
-    else if(posts.isEmpty){
+    } else if (posts.isEmpty) {
       return Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -120,19 +207,18 @@ class _ProfileState extends State<Profile> {
             Padding(
               padding: EdgeInsets.only(top: 20.0),
               child: Text(
-                    "No Post",
-                    style: TextStyle(
-                      color: Colors.redAccent,
-                      fontSize: 40.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                "No Posts",
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),
       );
-    }
-    else if(postOrientation=="grid"){
+    } else if (postOrientation == "grid") {
       List<GridTile> gridTiles = [];
       posts.forEach((post) {
         gridTiles.add(GridTile(child: PostTile(post)));
@@ -146,117 +232,37 @@ class _ProfileState extends State<Profile> {
         physics: NeverScrollableScrollPhysics(),
         children: gridTiles,
       );
-    }
-    else if(postOrientation=="list"){
+    } else if (postOrientation == "list") {
       return Column(
         children: posts,
       );
     }
   }
 
-  buildProfileButton() {
-    // viewing your own profile - should show edit profile button
-    bool isProfileOwner = currentUserId == widget.profileId;
-    if (isProfileOwner) {
-      return buildButton(text: "Edit Profile", function: editProfile);
-    }
-    else{
-      return Text('button');
-    }
-  }
-
-  buildProfileHeader() {
-    return FutureBuilder(
-      future: usersRef.document(widget.profileId).get(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return circularProgress();
-        }
-        User user = User.fromDocument(snapshot.data);
-        return Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  CircleAvatar(
-                    radius: 40.0,
-                    backgroundColor: Colors.grey,
-                    backgroundImage: CachedNetworkImageProvider(user.photoUrl),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            buildCountColumn("posts", postCount),
-                            buildCountColumn("followers", 0),
-                            buildCountColumn("following", 0),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            buildProfileButton(),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(top: 12.0),
-                child: Text(
-                  user.username,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.0,
-                  ),
-                ),
-              ),
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(top: 4.0),
-                child: Text(
-                  user.displayName,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: EdgeInsets.only(top: 2.0),
-                child: Text(
-                  user.bio,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-  setPostOrientation(String postOrientation){
+  setPostOrientation(String postOrientation) {
     setState(() {
-      this.postOrientation=postOrientation;
+      this.postOrientation = postOrientation;
     });
   }
-  buildTogglePostOrientation(){
+
+  buildTogglePostOrientation() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        IconButton(icon: Icon(Icons.grid_on),
-            color: postOrientation=='grid'?Colors.purple:Colors.grey,
-            onPressed: ()=> setPostOrientation("grid")),
-        IconButton(icon: Icon(Icons.list),
-            color: postOrientation=='list'?Colors.purple:Colors.grey,
-            onPressed: ()=> setPostOrientation("list"))
+        IconButton(
+          onPressed: () => setPostOrientation("grid"),
+          icon: Icon(Icons.grid_on),
+          color: postOrientation == 'grid'
+              ? Theme.of(context).primaryColor
+              : Colors.grey,
+        ),
+        IconButton(
+          onPressed: () => setPostOrientation("list"),
+          icon: Icon(Icons.list),
+          color: postOrientation == 'list'
+              ? Theme.of(context).primaryColor
+              : Colors.grey,
+        ),
       ],
     );
   }
@@ -273,9 +279,38 @@ class _ProfileState extends State<Profile> {
           Divider(
             height: 0.0,
           ),
-          buildProfilePost(),
+          buildProfilePosts(),
         ],
       ),
     );
   }
 }
+class User{
+  final String id;
+  final String username;
+  final String email;
+  final String photoUrl;
+  final String displayName;
+  final String bio;
+
+  User({
+    this.id,
+    this.username,
+    this.email,
+    this.photoUrl,
+    this.displayName,
+    this.bio,
+  });
+  factory User.fromDocument(DocumentSnapshot doc){
+    return User(
+      id: doc['id'],
+      email: doc['email'],
+      username: doc['username'],
+      photoUrl: doc['photoUrl'],
+      displayName: doc['displayName'],
+      bio: doc['bio'],
+    );
+  }
+}
+
+

@@ -60,7 +60,7 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  getFollowing() async {
+   getFollowing() async {
     QuerySnapshot snapshot = await followingRef
         .document(widget.profileId)
         .collection('userFollowing')

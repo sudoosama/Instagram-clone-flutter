@@ -37,7 +37,7 @@ dependencies:
   timeago: ^2.0.26
   cached_network_image: ^2.0.0
   flutter_svg: ^0.17.3+1
-
+  google_fonts: ^0.4.0
 
 
 dev_dependencies:
@@ -63,9 +63,9 @@ flutter:
   assets:
     - assets/images/activity_feed.png
     - assets/images/google_signin_button.png
-    - assets/images/no_content.png
+    - assets/images/no_content.svg
     - assets/images/search.svg
-    - assets/images/upload.png
+    - assets/images/upload.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -3,7 +3,7 @@ import 'package:animator/animator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:socialmedia/model/user.dart';
+//import 'package:socialmedia/model/user.dart';
 import 'package:socialmedia/pages/activity_feed.dart';
 import 'package:socialmedia/pages/comment.dart';
 import 'package:socialmedia/pages/home.dart';
@@ -101,6 +101,7 @@ class _PostState extends State<Post> {
           return circularProgress();
         }
         User user = User.fromDocument(snapshot.data);
+        bool isPostOwner=currentUserId==ownerId;
         return ListTile(
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(user.photoUrl),
@@ -117,15 +118,75 @@ class _PostState extends State<Post> {
             ),
           ),
           subtitle: Text(location),
-          trailing: IconButton(
-            onPressed: () => print('deleting post'),
+          trailing: isPostOwner ? IconButton(
+            onPressed: () => handleDeletePost(context),
             icon: Icon(Icons.more_vert),
-          ),
+          ):Text(''),
         );
       },
     );
   }
+handleDeletePost(BuildContext parentContext ){
+    return showDialog(
+      context: parentContext,
+      builder: (context){
+        return SimpleDialog(
+          title: Text("Remove this post?"),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: (){
+                Navigator.pop(context);
+                deletePost();
+              },
+              child: Text('Delete',
+              style: TextStyle(
 
+              ),),
+            ),
+            SimpleDialogOption(
+              onPressed: ()=> Navigator.pop(context),
+              child: Text('Cancel',
+               ),
+            )
+          ],
+        );
+      }
+    );
+}
+deletePost()async{
+    postsRef
+    .document(ownerId)
+        .collection('userPosts')
+        .document(postId)
+        .get().then((doc){
+       if(doc.exists){
+         doc.reference.delete();
+       }
+    });
+    //delete upload image for the post
+    storageRef.child("post_$postId.jpg").delete();
+    //then delete all activity feed notifications
+    QuerySnapshot activityFeedSnapshot=await activityFeedRef
+    .document(ownerId)
+    .collection("feeditems")
+    .where('postId',isEqualTo: postId)
+    .getDocuments();
+    activityFeedSnapshot.documents.forEach((doc){
+      if(doc.exists){
+        doc.reference.delete();
+      }
+    });
+    //then also delete all comments
+  QuerySnapshot commentsSnapshot=await commentsRef
+    .document(postId)
+    .collection('comments')
+    .getDocuments();
+    commentsSnapshot.documents.forEach((doc){
+      if(doc.exists){
+        doc.reference.delete();
+      }
+    });
+  }
   handleLikePost() {
     bool _isLiked = likes[currentUserId] == true;
 

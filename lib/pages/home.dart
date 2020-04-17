@@ -1,4 +1,3 @@
-import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,12 +12,13 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
 final StorageReference storageRef = FirebaseStorage.instance.ref();
-final activityFeedRef = Firestore.instance.collection('feed');
 final usersRef = Firestore.instance.collection('users');
 final postsRef = Firestore.instance.collection('posts');
 final commentsRef = Firestore.instance.collection('comments');
+final activityFeedRef = Firestore.instance.collection('feed');
 final followersRef = Firestore.instance.collection('followers');
 final followingRef = Firestore.instance.collection('following');
+final timelineRef = Firestore.instance.collection('timeline');
 final DateTime timestamp = DateTime.now();
 User currentUser;
 
@@ -28,6 +28,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isAuth = false;
   PageController pageController;
   int pageIndex = 0;
@@ -50,9 +51,9 @@ class _HomeState extends State<Home> {
     });
   }
 
-  handleSignIn(GoogleSignInAccount account) {
+  handleSignIn(GoogleSignInAccount account) async {
     if (account != null) {
-      createUserInFirestore();
+      await createUserInFirestore();
       setState(() {
         isAuth = true;
       });
@@ -83,6 +84,12 @@ class _HomeState extends State<Home> {
         "bio": "",
         "timestamp": timestamp
       });
+      // make new user their own follower (to include their posts in their timeline)
+      await followersRef
+          .document(user.id)
+          .collection('userFollowers')
+          .document(user.id)
+          .setData({});
 
       doc = await usersRef.document(user.id).get();
     }
@@ -120,13 +127,11 @@ class _HomeState extends State<Home> {
 
   Scaffold buildAuthScreen() {
     return Scaffold(
+      key: _scaffoldKey,
       body: PageView(
         children: <Widget>[
-          // Timeline(),
-          RaisedButton(
-            child: Text('Logout'),
-            onPressed: logout,
-          ),
+          //Timeline(currentUser: currentUser),
+          Timeline(),
           ActivityFeed(),
           Upload(currentUser: currentUser),
           Search(),
@@ -179,9 +184,9 @@ class _HomeState extends State<Home> {
           children: <Widget>[
             Text(
               'FlutterShare',
-              style: GoogleFonts.pacifico(
- //               fontFamily: "Signatra",
-                fontSize: 60.0,
+              style: TextStyle(
+                fontFamily: "Signatra",
+                fontSize: 90.0,
                 color: Colors.white,
               ),
             ),
@@ -212,9 +217,7 @@ class _HomeState extends State<Home> {
   }
 }
 
-//import 'package:cloud_firestore/cloud_firestore.dart';
-
-class User{
+class User {
   final String id;
   final String username;
   final String email;
@@ -230,9 +233,10 @@ class User{
     this.displayName,
     this.bio,
   });
-  factory User.fromDocument(DocumentSnapshot doc){
+
+  factory User.fromDocument(DocumentSnapshot doc) {
     return User(
-      id: doc['id'],
+      id: doc.documentID,
       email: doc['email'],
       username: doc['username'],
       photoUrl: doc['photoUrl'],
@@ -241,5 +245,3 @@ class User{
     );
   }
 }
-
-

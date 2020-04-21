@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:socialmedia/pages/home.dart';
 import 'package:socialmedia/widgets/progress.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:socialmedia/model/user.dart';
 
 class EditProfile extends StatefulWidget {
   final String currentUserId;
@@ -18,7 +19,7 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController displayNameController = TextEditingController();
   TextEditingController bioController = TextEditingController();
   bool isLoading = false;
-  User user;
+  User1 user;
   bool _displayNameValid = true;
   bool _bioValid = true;
 
@@ -34,7 +35,7 @@ class _EditProfileState extends State<EditProfile> {
       isLoading = true;
     });
     DocumentSnapshot doc = await usersRef.document(widget.currentUserId).get();
-    user = User.fromDocument(doc);
+    user = User1.fromDocument(doc);
     displayNameController.text = user.displayName;
     bioController.text = user.bio;
     setState(() {

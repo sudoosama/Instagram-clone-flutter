@@ -3,7 +3,6 @@ import 'package:animator/animator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-//import 'package:socialmedia/model/user.dart';
 import 'package:socialmedia/pages/activity_feed.dart';
 import 'package:socialmedia/pages/comment.dart';
 import 'package:socialmedia/pages/home.dart';
@@ -100,7 +99,7 @@ class _PostState extends State<Post> {
         if (!snapshot.hasData) {
           return circularProgress();
         }
-        User user = User.fromDocument(snapshot.data);
+        User1 user = User1.fromDocument(snapshot.data);
         bool isPostOwner=currentUserId==ownerId;
         return ListTile(
           leading: CircleAvatar(
@@ -379,7 +378,7 @@ showComments(BuildContext context,
 }
 
 
-class User{
+class User1{
   final String id;
   final String username;
   final String email;
@@ -387,7 +386,7 @@ class User{
   final String displayName;
   final String bio;
 
-  User({
+  User1({
     this.id,
     this.username,
     this.email,
@@ -395,8 +394,8 @@ class User{
     this.displayName,
     this.bio,
   });
-  factory User.fromDocument(DocumentSnapshot doc){
-    return User(
+  factory User1.fromDocument(DocumentSnapshot doc){
+    return User1(
       id: doc['id'],
       email: doc['email'],
       username: doc['username'],

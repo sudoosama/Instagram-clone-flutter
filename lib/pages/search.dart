@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:socialmedia/pages/activity_feed.dart';
 import 'package:socialmedia/pages/home.dart';
 import 'package:socialmedia/widgets/progress.dart';
+import 'package:socialmedia/model/user.dart';
 
 class Search extends StatefulWidget {
   @override
@@ -87,7 +88,7 @@ class _SearchState extends State<Search>
         }
         List<UserResult> searchResults = [];
         snapshot.data.documents.forEach((doc) {
-          User user = User.fromDocument(doc);
+          User1 user = User1.fromDocument(doc);
           UserResult searchResult = UserResult(user);
           searchResults.add(searchResult);
         });
@@ -114,7 +115,7 @@ class _SearchState extends State<Search>
 }
 
 class UserResult extends StatelessWidget {
-  final User user;
+  final User1 user;
 
   UserResult(this.user);
 

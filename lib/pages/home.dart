@@ -33,6 +33,8 @@ class _HomeState extends State<Home> {
   PageController pageController;
   int pageIndex = 0;
 
+  get currentUser1 => User;
+
   @override
   void initState() {
     super.initState();
@@ -130,8 +132,10 @@ class _HomeState extends State<Home> {
       key: _scaffoldKey,
       body: PageView(
         children: <Widget>[
-          //Timeline(currentUser: currentUser),
-          Timeline(),
+         //Timeline(currentUser1: currentUser1),
+          //timeline.User(currentUser: currentUser),
+          //timeline(currentUser: currentUser,),
+          Timeline(currentUser: currentUser),
           ActivityFeed(),
           Upload(currentUser: currentUser),
           Search(),
@@ -214,34 +218,5 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return isAuth ? buildAuthScreen() : buildUnAuthScreen();
-  }
-}
-
-class User {
-  final String id;
-  final String username;
-  final String email;
-  final String photoUrl;
-  final String displayName;
-  final String bio;
-
-  User({
-    this.id,
-    this.username,
-    this.email,
-    this.photoUrl,
-    this.displayName,
-    this.bio,
-  });
-
-  factory User.fromDocument(DocumentSnapshot doc) {
-    return User(
-      id: doc.documentID,
-      email: doc['email'],
-      username: doc['username'],
-      photoUrl: doc['photoUrl'],
-      displayName: doc['displayName'],
-      bio: doc['bio'],
-    );
   }
 }

@@ -161,3 +161,62 @@ exports.onDeletePost = functions.firestore
         });
     });
   });
+
+exports.onCreateActivityFeedItem=functions.firestore
+    .document("/feed/{userId}/feedItems/{activityFeedItem}")
+    .onCreate(async(snapshot,context)=>{
+        console.log('Activity Feed Item Created',snapshot.data());
+           // 1) Get user connected to the feed
+        const userId=context.params.userId;
+
+        const userRef=admin.firestore().doc(`users/${userId}`);
+        const doc=await userRef.get();
+
+        //2) once we have user check if they have a notification token then send
+        const androidNotificationToken=doc.data()
+        .androidNotificationToken
+        const createdActivityFeedItem=snapshot.data();
+        if(androidNotificationToken){
+               sendNotification(androidNotificationToken,createdActivityFeedItem);
+        }
+        else {
+            console.log("No token for user, cannot send notification");
+
+        }
+        function sendNotification(androidNotificationToken,activityFeedItem){
+            let body;
+
+            //3) switch body value based of notification type
+            switch(activityFeedItem.type){
+                case "comment":
+                    body=`${activityFeedItem.username} replied: ${activityFeedItem.commentData}`;
+                    break;
+                case "like":
+                    body=`${activityFeedItem.username} like your post`;
+                    break;
+                case "follow":
+                    body=`${activityFeedItem.username} start following you`;
+                    break;
+                default:
+                    break;
+            }
+            //4) Create message for push notification
+            const message={
+                notification:{body},
+                token: androidNotificationToken,
+                data: {recipient: userId}
+            };
+            //5) Send message with admin.message()
+            admin
+                .messaging()
+                .send(message)
+                .then(response=> {
+                    //respone is a message ID string
+                    console.log("Successfully send message",response);
+                })
+                .catch(error=>{
+                    console.log("Error sending message",error);
+                });
+        }
+
+    });

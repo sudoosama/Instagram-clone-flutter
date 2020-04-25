@@ -1,3 +1,4 @@
+import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -136,9 +137,9 @@ class _HomeState extends State<Home> {
           //timeline.User(currentUser: currentUser),
           //timeline(currentUser: currentUser,),
           Timeline(currentUser: currentUser),
-          ActivityFeed(),
-          Upload(currentUser: currentUser),
           Search(),
+          Upload(currentUser: currentUser),
+          ActivityFeed(),
           Profile(profileId: currentUser?.id),
         ],
         controller: pageController,
@@ -150,22 +151,23 @@ class _HomeState extends State<Home> {
           onTap: onTap,
           activeColor: Theme.of(context).primaryColor,
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.whatshot)),
-            BottomNavigationBarItem(icon: Icon(Icons.notifications_active)),
+            BottomNavigationBarItem(icon: Icon(Icons.home,
+              color: Colors.black,)),
+            BottomNavigationBarItem(icon: Icon(Icons.search,
+              color: Colors.black,)),
             BottomNavigationBarItem(
               icon: Icon(
-                Icons.photo_camera,
+                Icons.add_circle_outline,
                 size: 35.0,
+                color: Colors.black,
               ),
             ),
-            BottomNavigationBarItem(icon: Icon(Icons.search)),
-            BottomNavigationBarItem(icon: Icon(Icons.account_circle)),
+            BottomNavigationBarItem(icon: Icon(Icons.favorite,
+              color: Colors.black,)),
+            BottomNavigationBarItem(icon: Icon(Icons.person,
+              color: Colors.black,)),
           ]),
     );
-    // return RaisedButton(
-    //   child: Text('Logout'),
-    //   onPressed: logout,
-    // );
   }
 
   Scaffold buildUnAuthScreen() {
@@ -187,11 +189,10 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              'FlutterShare',
-              style: TextStyle(
-                fontFamily: "Signatra",
-                fontSize: 90.0,
-                color: Colors.white,
+              'Instagram',
+              style: GoogleFonts.grandHotel(
+                fontSize: 48,
+                fontWeight: FontWeight.w700,
               ),
             ),
             GestureDetector(

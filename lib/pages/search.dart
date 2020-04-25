@@ -37,10 +37,10 @@ class _SearchState extends State<Search>
       title: TextFormField(
         controller: searchController,
         decoration: InputDecoration(
-          hintText: "Search for a user...",
+          hintText: "Search",
           filled: true,
           prefixIcon: Icon(
-            Icons.account_box,
+            Icons.search,
             size: 28.0,
           ),
           suffixIcon: IconButton(
@@ -60,20 +60,22 @@ class _SearchState extends State<Search>
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
-            SvgPicture.asset(
-              'assets/images/search.svg',
-              height: orientation == Orientation.portrait ? 300.0 : 200.0,
-            ),
-            Text(
-              "Find Users",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w600,
-                fontSize: 60.0,
-              ),
-            ),
+
+//            SvgPicture.asset(
+//              'assets/images/search.svg',
+//              height: orientation == Orientation.portrait ? 300.0 : 200.0,
+//            ),
+//            Text(
+//              "Find Users",
+//              textAlign: TextAlign.center,
+//              style: TextStyle(
+//                color: Colors.white,
+//                fontStyle: FontStyle.italic,
+//                fontWeight: FontWeight.w600,
+//                fontSize: 60.0,
+//              ),
+//            ),
+
           ],
         ),
       ),
@@ -107,7 +109,7 @@ class _SearchState extends State<Search>
     super.build(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor.withOpacity(0.8),
+      backgroundColor:Colors.white,
       appBar: buildSearchField(),
       body:
       searchResultsFuture == null ? buildNoContent() : buildSearchResults(),

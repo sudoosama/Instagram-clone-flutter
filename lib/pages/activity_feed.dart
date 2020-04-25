@@ -32,16 +32,19 @@ class _ActivityFeedState extends State<ActivityFeed> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.orange,
-      appBar: header(titleText: "Activity Feed"),
+      backgroundColor: Colors.white,
+      appBar: header(titleText: "Activity",leadIcon: false,actIcon: false),
       body: Container(
           child: FutureBuilder(
+
             future: getActivityFeed(),
             builder: (context, snapshot) {
+
               if (!snapshot.hasData) {
                 return circularProgress();
               }
               return ListView(
+
                 children: snapshot.data,
               );
             },
@@ -140,7 +143,7 @@ class ActivityFeedItem extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: 2.0),
       child: Container(
-        color: Colors.white54,
+        color: Colors.white30,
         child: ListTile(
           title: GestureDetector(
             onTap: () => showProfile(context, profileId: userId),

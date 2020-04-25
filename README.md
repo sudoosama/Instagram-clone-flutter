@@ -1,4 +1,4 @@
-# socialmedia
+# Flutter Instagram Clone
 
 A new Flutter project.
 

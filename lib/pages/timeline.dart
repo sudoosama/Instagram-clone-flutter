@@ -81,7 +81,7 @@ class _TimelineState extends State<Timeline> {
           }
         });
         return Container(
-          color: Theme.of(context).accentColor.withOpacity(0.2),
+          color: Colors.white,
           child: Column(
             children: <Widget>[
               Container(
@@ -119,8 +119,10 @@ class _TimelineState extends State<Timeline> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header(isAppTitle: true),
-      body: RefreshIndicator(
+      appBar: header(isAppTitle: true,leadIcon: true,actIcon: true),
+
+      body:
+      RefreshIndicator(
         onRefresh: ()=> getTimeline(),
         child: buildTimeline(),
       ),

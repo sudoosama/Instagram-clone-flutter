@@ -39,7 +39,7 @@ keytool -exportcert -list -v \
 * Follow instructions to download ```google-services.json```
 place ```google-services.json``` into ```/android/app/```.
 
-* [Youtube](https://youtu.be/3EDbg7q-o3M) - Instagram Flutter Firebase
+* [Youtube- Full Video with working functionality](https://youtu.be/3EDbg7q-o3M) - Instagram Flutter Firebase
 
 
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/OsamaxD1/SocialMediaFlutter/issues)

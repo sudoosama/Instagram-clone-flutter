@@ -47,5 +47,5 @@ place ```google-services.json``` into ```/android/app/```.
 
 
 ## Created and Maintain by
-* [Hassan Osama](https://github.com/OsamaxD1) and [Twitter](https://twitter.com/whatosama) - Follow me on Twitter
+* [Hassan Osama](https://github.com/OsamaxD1) - Follow me on Twitter [Twitter](https://twitter.com/whatosama) 
 

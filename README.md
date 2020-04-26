@@ -20,13 +20,12 @@ cd SocialMediaFlutter
 * Click "Authentication" in the left-hand menu
 * Click the "sign-in method" tab
 * Click "Google" and enable it
-* Click "Email/Password" and enable it
 3. Enable the Firebase Database
 * Go to the Firebase Console
 * Click "Database" in the left-hand menu
 * Click the Realtime "Create Database" button
 * Select "Start in test mode" and "Enable"
-* Create an app within your Firebase instance for Android, with package name com.thealphamerc.flutter_twitter_clone
+* Create an app within your Firebase instance for Android.
 * Run the following command to get your SHA-1 key:
 
 ```
@@ -46,5 +45,5 @@ place ```google-services.json``` into ```/android/app/```.
 
 
 ## Created and Maintain by
-* [Hassan Osama](https://github.com/OsamaxD1) - Follow me on Twitter [Twitter](https://twitter.com/whatosama) 
+* [Hassan Osama](https://github.com/OsamaxD1) - Follow me on [Twitter](https://twitter.com/whatosama) 
 

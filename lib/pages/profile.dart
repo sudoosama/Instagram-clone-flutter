@@ -377,7 +377,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header(titleText: "Profile"),
+      appBar: header(titleText: "Profile",removeBackButton: true),
       body: ListView(
         children: <Widget>[
           buildProfileHeader(),

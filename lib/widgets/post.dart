@@ -267,7 +267,7 @@ deletePost()async{
           cachedNetworkImage(mediaUrl),
           showHeart
               ? Animator(
-            duration: Duration(milliseconds: 300),
+            duration: Duration(milliseconds: 400),
             tween: Tween(begin: 0.8, end: 1.4),
             curve: Curves.elasticOut,
             cycles: 0,
@@ -276,7 +276,7 @@ deletePost()async{
               child: Icon(
                 Icons.favorite,
                 size: 80.0,
-                color: Colors.red,
+                color: Colors.white,
               ),
             ),
           )

@@ -178,12 +178,14 @@ class _HomeState extends State<Home> {
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
             colors: [
-              Theme.of(context).accentColor,
-              Theme.of(context).primaryColor,
+              Colors.red,
+              Colors.blue,
+//              Theme.of(context).accentColor,
+//              Theme.of(context).primaryColor,
             ],
           ),
         ),
-        alignment: Alignment.center,
+        alignment: Alignment.topCenter,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -193,6 +195,7 @@ class _HomeState extends State<Home> {
               style: GoogleFonts.grandHotel(
                 fontSize: 48,
                 fontWeight: FontWeight.w700,
+                color: Colors.white
               ),
             ),
             GestureDetector(

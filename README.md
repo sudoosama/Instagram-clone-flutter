@@ -26,7 +26,6 @@ cd SocialMediaFlutter
 * Click "Database" in the left-hand menu
 * Click the Realtime "Create Database" button
 * Select "Start in test mode" and "Enable"
-4. (skip if not running on Android)
 * Create an app within your Firebase instance for Android, with package name com.thealphamerc.flutter_twitter_clone
 * Run the following command to get your SHA-1 key:
 

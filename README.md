@@ -9,8 +9,8 @@ Instagram clone application in flutter amazing realtime social network, backend 
 
 # Getting started
 ```
-git https://github.com/OsamaxD1/SocialMediaFlutter.git
-cd SocialMediaFlutter
+git https://github.com/OsamaxD1/Instagram-clone-flutter.git InstagramFlutter
+cd InstagramFlutter
 ```
 
 # Setup the firebase app

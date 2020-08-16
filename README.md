@@ -28,10 +28,6 @@ cd InstagramFlutter
 * Create an app within your Firebase instance for Android.
 * Run the following command to get your SHA-1 key:
 
-```
-keytool -exportcert -list -v \
--alias androiddebugkey -keystore ~/.android/debug.keystore
-```
 
 
 * In the Firebase console, in the settings of your Android app, add your SHA-1 key by clicking "Add Fingerprint".
